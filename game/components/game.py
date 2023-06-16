@@ -40,7 +40,7 @@ class Game:
     def update(self):
         #el update llama al update de los objetos de algunos de los objetos de mi juego
         #pass # pass equivale a hacer nada 
-        events = pygame.key.get_pressed() #contiene todos los eventos del teclado qye pudieron ocurrir en un gameloop
+        events = pygame.key.get_pressed() #contiene todos los eventos del teclado que pudieron ocurrir en un gameloop
         self.spaceship.update(events)
 
     def draw(self):
