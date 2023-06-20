@@ -22,7 +22,12 @@ class Game:
         self.x_pos_bg = 0
         self.y_pos_bg = 0
         self.spaceship = Spaceship()
-        self.enemy = Enemy()
+        self.enemies = [] # Lista para almacenar los enemigos
+        #Genera 5 enemigos y los almacena en la lista
+        for _ in range(5):
+            enemy = Enemy()
+            self.enemies.append(enemy)
+
 
 
     def run(self):
@@ -32,6 +37,7 @@ class Game:
             self.handle_events()
             self.update()
             self.draw()
+            
         else:
             print("Something ocurred to quit the game!\nBYE BYE!")
         pygame.display.quit()
@@ -48,7 +54,9 @@ class Game:
         #pass => pass equivale a hacer nada 
         events = pygame.key.get_pressed() #contiene todos los eventos del teclado que pudieron ocurrir en un gameloop
         self.spaceship.update(events)
-        self.enemy.update()
+        for enemy in self.enemies:  #Actualiza cada enemigo
+            enemy.update()
+        
 
     def draw(self):
         self.clock.tick(FPS) # configuro cuantos frames per second voy a dibujar
@@ -58,9 +66,10 @@ class Game:
         #yo "Game" le ordeno al spaceship dibujarse llamando a un metodo draw del Spaceship
         #el metodo draw espera que le pase el screen
         self.spaceship.draw(self.screen)
-        #yo "Game" le ordeno al enemy dibujarse llamando a un metodo draw del Enemy
+        #yo "Game" le ordeno al enemy dibujarse varias veces llamando a un metodo draw del Enemy
         #el metodo draw espera que le pase el screen
-        self.enemy.draw(self.screen)
+        for enemy in self.enemies:
+            enemy.draw(self.screen)
         pygame.display.update() # esto hace que el dibujo se actualice en el display de pygame
         pygame.display.flip()  # hace el cambio
 
