@@ -1,6 +1,6 @@
 import pygame
 
-from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE
+from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE,SOUND
 from game.components.spaceship import Spaceship
 #Game tiene un spaceship (una instancia de una clase Spaceship)
 #Game puede decirle al spaceship que se actualize llamando al metodo update(), update espera una lista que contiene
@@ -27,6 +27,7 @@ class Game:
         for _ in range(5):
             enemy = Enemy()
             self.enemies.append(enemy)
+        self.sounds = SOUND
 
 
 
@@ -48,6 +49,10 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT: #el QUIT event es el click en el icono que cierra ventana
                 self.playing = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.spaceship.fire_bullet()
+        
 
     def update(self):
         #el update llama al update de los objetos de algunos de los objetos de mi juego
@@ -56,6 +61,22 @@ class Game:
         self.spaceship.update(events)
         for enemy in self.enemies:  #Actualiza cada enemigo
             enemy.update()
+        # Detección de colisiones entre balas y enemigos
+        for bullet in self.spaceship.bullets: # Iterar sobre cada bala del Spaceship
+            for enemy in self.enemies: # Iterar sobre cada enemigo
+                if bullet.rect.colliderect(enemy.rect): # Verificar si la bala colisiona con el enemigo
+                    self.spaceship.bullets.remove(bullet)  # Eliminar la bala
+                    self.enemies.remove(enemy)  # Eliminar el enemigo
+                    # Reproducir el sonido al elimiar una nave enemiga
+                    self.sounds.play()
+                    break  # Salir del bucle interno
+    
+        # Generar nuevos enemigos si no quedan en la pantalla
+        if not self.enemies:
+            for _ in range(5):
+                enemy = Enemy()
+                self.enemies.append(enemy)
+    
         
 
     def draw(self):
@@ -70,6 +91,7 @@ class Game:
         #el metodo draw espera que le pase el screen
         for enemy in self.enemies:
             enemy.draw(self.screen)
+        self.spaceship.draw_bullets(self.screen) #dibuja las balas
         pygame.display.update() # esto hace que el dibujo se actualice en el display de pygame
         pygame.display.flip()  # hace el cambio
 

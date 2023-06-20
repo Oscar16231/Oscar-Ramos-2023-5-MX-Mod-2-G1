@@ -1,45 +1,67 @@
 import pygame
-
 from pygame.sprite import Sprite
+from game.utils.constants import SPACESHIP, SCREEN_WIDTH, SCREEN_HEIGHT, BULLET
 
-from game.utils.constants import SPACESHIP,SCREEN_WIDTH,SCREEN_HEIGHT
-#sprite es un objeto de pygame
+class Bullet(Sprite):
+    def __init__(self, position):
+        super().__init__()
+        self.image = pygame.transform.scale(BULLET, (20, 20))  # Escala la imagen de la bala a un tamaño de 20x20 píxeles
+        self.rect = self.image.get_rect()  # Obtiene el rectángulo que representa la imagen de la bala
+        self.rect.x = position[0]  # Establece la posición inicial en el eje x de la bala
+        self.rect.y = position[1]  # Establece la posición inicial en el eje y de la bala
+
+    def update(self):
+        self.rect.y -= 8  # Actualiza la posición de la bala moviéndola hacia arriba
+
 class Spaceship(Sprite):
     def __init__(self):
-        self.image = SPACESHIP
-        self.image = pygame.transform.scale(self.image,(50,60)) #ancho y alto
-        self.rect = self.image.get_rect()
-        self.speed = 8  #Movimiento de la nave, velocidad de desplazamiento
-        self.rect.x = (SCREEN_WIDTH - self.rect.width) // 2 #Coloca la nave en el centro del eje x
-        self.rect.y = (SCREEN_HEIGHT - self.rect.height) #Coloca la nave en el tope inferior de la pantalla en el eje y
+        self.image = SPACESHIP  # Carga la imagen de la nave espacial
+        self.image = pygame.transform.scale(self.image, (50, 60))  # Escala la imagen de la nave a un tamaño de 50x60 píxeles
+        self.rect = self.image.get_rect()  # Obtiene el rectángulo que representa la imagen de la nave
+        self.speed = 8  # Velocidad de movimiento de la nave
+        self.rect.x = (SCREEN_WIDTH - self.rect.width) // 2  # Posición inicial en el eje x de la nave (centrada horizontalmente)
+        self.rect.y = SCREEN_HEIGHT - self.rect.height  # Posición inicial en el eje y de la nave (parte inferior de la pantalla)
+        self.bullets = []  # Lista para almacenar las balas disparadas por la nave
 
     def draw(self, screen):
-        screen.blit(self.image, (self.rect.x, self.rect.y))
-    
-    def move_left(self,keyboard_events): #Movimiento a la derecha
-        if keyboard_events[pygame.K_LEFT]:
-            self.rect.x -= self.speed
-    
-    def move_right(self,keyboard_events): #Movimiento a la izquierda
-        if keyboard_events[pygame.K_RIGHT]:
-            self.rect.x += self.speed
-    
-    def move_up(self,keyboard_events): #Movimiento hacia arriba
-        if keyboard_events[pygame.K_UP]:
-            self.rect.y -= self.speed
-    
-    def move_down(self,keyboard_events): #Movimiento hacia abajo
-        if keyboard_events[pygame.K_DOWN]:
-            self.rect.y += self.speed
+        screen.blit(self.image, (self.rect.x, self.rect.y))  # Dibuja la imagen de la nave en la pantalla
 
-    def update(self,keyboard_events):
-        self.move_up(keyboard_events)   
+    def draw_bullets(self, screen):
+        for bullet in self.bullets:
+            screen.blit(bullet.image, bullet.rect)  # Dibuja cada bala en la pantalla
+
+    def move_left(self, keyboard_events):
+        if keyboard_events[pygame.K_LEFT]:
+            self.rect.x -= self.speed  # Mueve la nave hacia la izquierda según la velocidad establecida
+
+    def move_right(self, keyboard_events):
+        if keyboard_events[pygame.K_RIGHT]:
+            self.rect.x += self.speed  # Mueve la nave hacia la derecha según la velocidad establecida
+
+    def move_up(self, keyboard_events):
+        if keyboard_events[pygame.K_UP]:
+            self.rect.y -= self.speed  # Mueve la nave hacia arriba según la velocidad establecida
+
+    def move_down(self, keyboard_events):
+        if keyboard_events[pygame.K_DOWN]:
+            self.rect.y += self.speed  # Mueve la nave hacia abajo según la velocidad establecida
+
+    def fire_bullet(self):
+        # Crea una nueva instancia de bala con la posición adecuada
+        bullet = Bullet((self.rect.x + self.rect.width // 2, self.rect.y))  
+        self.bullets.append(bullet)  # Agrega la bala a la lista de balas de la nave
+
+    def update_bullets(self):
+        for bullet in self.bullets:
+            bullet.update()  # Actualiza la posición de cada bala moviéndola hacia arriba
+            if bullet.rect.y < 0:
+                self.bullets.remove(bullet)  # Si la bala sale de la pantalla, se elimina de la lista
+
+    def update(self, keyboard_events):
+        self.move_up(keyboard_events)
         self.move_down(keyboard_events)
         self.move_left(keyboard_events)
         self.move_right(keyboard_events)
-        #Limita el espacio de movimiento en el eje x al tamaño de la pantalla
-        self.rect.x = max(0, min(self.rect.x, SCREEN_WIDTH - self.rect.width))  
-        #Limita el espacio de movimiento en el eje y al tamaño de la pantalla
-        self.rect.y = max(0, min(self.rect.y, SCREEN_HEIGHT - self.rect.height))
-
-        
+        self.rect.x = max(0, min(self.rect.x, SCREEN_WIDTH - self.rect.width))  # Limita la posición de la nave dentro de los límites de la pantalla en el eje x
+        self.rect.y = max(0, min(self.rect.y, SCREEN_HEIGHT - self.rect.height))  # Limita la posición de la nave dentro de los límites de la pantalla en el eje y
+        self.update_bullets()  # Actualiza las balas disparadas por la nave

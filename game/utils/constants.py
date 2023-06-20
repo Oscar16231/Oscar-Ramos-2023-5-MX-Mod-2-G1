@@ -1,6 +1,6 @@
 import pygame
 import os
-
+pygame.mixer.init()
 # Global Constants
 TITLE = "Spaceships Game"
 SCREEN_HEIGHT = 600
@@ -16,6 +16,14 @@ SHIELD = pygame.image.load(os.path.join(IMG_DIR, 'Other/shield.png'))
 BG = pygame.image.load(os.path.join(IMG_DIR, 'Other/Track.png'))
 
 HEART = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart.png'))
+
+
+
+# Ruta completa al archivo de sonido
+sound_file_path = os.path.join(os.path.dirname(__file__), "..", "assets", "8-bit-kit-boop_C.wav")
+
+# Cargar el sonido
+SOUND = pygame.mixer.Sound(sound_file_path)
 
 DEFAULT_TYPE = "default"
 SHIELD_TYPE = 'shield'
