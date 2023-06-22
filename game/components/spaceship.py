@@ -51,6 +51,13 @@ class Spaceship(Sprite):
         bullet = Bullet((self.rect.x + self.rect.width // 2, self.rect.y))  
         self.bullets.append(bullet)  # Agrega la bala a la lista de balas de la nave
 
+    def reset(self):
+        self.rect.centerx = SCREEN_WIDTH // 2
+        self.rect.bottom = SCREEN_HEIGHT - 10
+        self.speed_x = 0
+        self.bullets.clear()
+
+
     def update_bullets(self):
         for bullet in self.bullets:
             bullet.update()  # Actualiza la posición de cada bala moviéndola hacia arriba
