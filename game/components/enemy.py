@@ -27,15 +27,13 @@ class Enemy(Sprite):
             self.rect.x = random.randint(0, SCREEN_WIDTH - self.rect.width)  # Reposicionar enemigo en el eje x
             self.rect.y = random.randint(-self.rect.height, -10)  # Reposicionar enemigo en la parte superior de la pantalla
             self.speed_x = random.randint(-9, 9)  # Generar una nueva velocidad horizontal aleatoria
-            self.speed_y = random.randint(8, 15)  # Generar una nueva velocidad vertical aleatoria
+            self.speed_y = random.randint(9, 29)  # Generar una nueva velocidad vertical aleatoria
             self.image = pygame.transform.scale(random.choice(self.images), (50, 60))  # Cambiar aleatoriamente la imagen del enemigo
-
         # Verificar si el enemigo ha alcanzado los límites de la pantalla en el eje x
         if self.rect.right > SCREEN_WIDTH:
             self.speed_x = -random.randint(1, 9)  # Cambiar la dirección del movimiento hacia la izquierda
         elif self.rect.left < 0:
             self.speed_x = random.randint(1, 9)  # Cambiar la dirección del movimiento hacia la derecha
-
         # Actualizar el movimiento de las balas
         self.bullets.update()
 
@@ -46,10 +44,15 @@ class Enemy(Sprite):
 class BulletEnemy(Sprite):
     def __init__(self, x, y):
         super().__init__()
+        # Inicializar el objeto BulletEnemy
+        # Cargar y ajustar la escala de la imagen de la bala
         self.image = pygame.transform.scale(BULLET_ENEMY, (15, 15))
+        # Obtener el rectángulo que ocupa la imagen de la bala
         self.rect = self.image.get_rect()
+        # Establecer la posición inicial del centro de la bala
         self.rect.centerx = x
         self.rect.centery = y
+        # Establecer la velocidad vertical de la bala
         self.speed_y = 16
 
     def update(self):
