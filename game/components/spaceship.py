@@ -80,6 +80,7 @@ class Spaceship(Sprite):
     def shield_collision(self):
         self.image = pygame.transform.scale(SPACESHIP_SHIELD, (50, 60))
         self.shield.kill()
+        
     def normal(self):
         self.image = pygame.transform.scale(SPACESHIP, (50, 60))
         

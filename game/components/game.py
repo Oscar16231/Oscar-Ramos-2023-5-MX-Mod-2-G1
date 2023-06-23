@@ -65,20 +65,16 @@ class Game:
         events = pygame.key.get_pressed()
         self.spaceship.update(events)
         self.shield.update()
+        if self.life <= 10:
+            self.spaceship.normal()
         for enemy in self.enemies:
             enemy.update()
             if randint(1, 20) == 1:
                 enemy.fire_bullet()
-                
         self.handle_collisions()
         if not self.enemies:
             self.spawn_enemies()
         # Maneja las colisiones entre balas y enemigos
-        self.handle_collisions()
-        # Si no quedan enemigos, genera más
-        if not self.enemies:
-            self.spawn_enemies()
-    
     
     def handle_collisions(self):
         for bullet in self.spaceship.bullets:
@@ -89,37 +85,25 @@ class Game:
                     self.sounds.play()
                     self.score += 100
                     self.deaths += 1
-                
         for enemy in self.enemies:
             for bullet in enemy.bullets:
                 if bullet.rect.colliderect(self.spaceship.rect):
                     self.life -= 1
                     if self.life <= 0:
-                        self.spaceship.normal()
                         self.game_over()
         if pygame.sprite.spritecollide(self.spaceship, self.enemies, False):
             self.life -= 1
             if self.life <= 0:
-                self.spaceship.normal()
                 self.game_over()
         if pygame.sprite.collide_rect(self.spaceship, self.shield):
-            self.life += 1
-            self.spaceship.shield_collision()
-            self.shield.kill()
-
-            
-
-
-        
+            if self.life < 100 :
+                self.life += 1
+                self.spaceship.shield_collision()
 
     def spawn_enemies(self):
         for _ in range(5):
             enemy = Enemy()
             self.enemies.append(enemy)
-        
-        
-        
-    
 
     def game_over(self):
         self.playing = False
@@ -127,6 +111,7 @@ class Game:
         self.game_over_screen.show(self.screen, self.score, self.max_score, self.deaths)
         self.score = 0
         self.deaths = 0
+        self.life = 0
         self.spaceship.reset()
         self.enemies.clear()
 

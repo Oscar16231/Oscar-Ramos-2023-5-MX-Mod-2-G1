@@ -2,6 +2,7 @@ import pygame
 import sys
 from game.utils.constants import SCREEN_WIDTH, SCREEN_HEIGHT, FONT_STYLE
 
+
 class GameOverScreen:
     def __init__(self, restart_game):
         self.restart_game = restart_game
@@ -14,6 +15,7 @@ class GameOverScreen:
         self.score_text = None
         self.deaths = None
         self.max_score_text = None
+        
 
     def show(self, screen, score, max_score, deaths):
         screen.fill((0, 0, 0))  # Limpia la pantalla con un color negro
